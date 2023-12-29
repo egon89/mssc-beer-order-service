@@ -13,11 +13,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class BaseDto {
-  private UUID id;
+  protected UUID id;
 
-  private Integer version;
+  protected Integer version;
 
-  private OffsetDateTime createdAt;
+  protected OffsetDateTime createdAt;
 
-  private OffsetDateTime updatedAt;
+  protected OffsetDateTime updatedAt;
 }
