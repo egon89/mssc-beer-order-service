@@ -15,7 +15,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class BeerOrderDto extends BaseDto{
 
-  @Builder
+  @Builder(toBuilder = true)
   public BeerOrderDto(
       UUID id, Integer version, OffsetDateTime createdAt, OffsetDateTime updatedAt, UUID customerId, String customerRef,
       List<BeerOrderLineDto> beerOrderLines, OrderStatusEnum orderStatus, String orderStatusCallbackUrl) {
