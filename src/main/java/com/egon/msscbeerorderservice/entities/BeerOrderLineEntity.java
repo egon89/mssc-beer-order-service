@@ -22,6 +22,7 @@ public class BeerOrderLineEntity {
   @Column(length = 36, updatable = false, nullable = false)
   private UUID id;
 
+  @ManyToOne
   private BeerOrderEntity beerOrder;
 
   private UUID beerId;
