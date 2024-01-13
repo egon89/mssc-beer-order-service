@@ -1,0 +1,1 @@
+INSERT INTO tb_customer (id, name, api_key, created_at, updated_at, version ) values ('0a818933-087d-47f2-ad83-2f986ed087eb', 'Tasting Room', '8aeb6dad-1d56-4769-8de9-0dae263d5bb9', CURRENT_TIMESTAMP , CURRENT_TIMESTAMP , 1);
