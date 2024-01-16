@@ -1,10 +1,12 @@
-package com.egon.msscbeerorderservice.services;
+package com.egon.msscbeerorderservice.services.impl;
 
 import com.egon.msscbeerorderservice.dtos.BeerOrderDto;
 import com.egon.msscbeerorderservice.dtos.BeerOrderLineDto;
 import com.egon.msscbeerorderservice.entities.CustomerEntity;
 import com.egon.msscbeerorderservice.repositories.BeerOrderRepository;
 import com.egon.msscbeerorderservice.repositories.CustomerRepository;
+import com.egon.msscbeerorderservice.services.PlaceOrderBeerOrderService;
+import com.egon.msscbeerorderservice.services.PlaceTastingRoomOrder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
