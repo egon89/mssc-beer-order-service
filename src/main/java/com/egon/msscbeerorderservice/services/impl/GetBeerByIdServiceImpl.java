@@ -1,21 +1,20 @@
 package com.egon.msscbeerorderservice.services.impl;
 
 import com.egon.msscbeerorderservice.dtos.BeerDto;
-import com.egon.msscbeerorderservice.services.GetBeerById;
+import com.egon.msscbeerorderservice.services.GetBeerByIdService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GetBeerByIdImpl implements GetBeerById {
+public class GetBeerByIdServiceImpl implements GetBeerByIdService {
 
   private final RestTemplate restTemplate;
 

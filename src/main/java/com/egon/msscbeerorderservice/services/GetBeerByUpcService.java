@@ -4,6 +4,6 @@ import com.egon.msscbeerorderservice.dtos.BeerDto;
 
 import java.util.Optional;
 
-public interface GetBeerByUpc {
+public interface GetBeerByUpcService {
   Optional<BeerDto> execute(String upc);
 }
