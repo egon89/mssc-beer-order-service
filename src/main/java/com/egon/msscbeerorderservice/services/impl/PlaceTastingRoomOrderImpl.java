@@ -39,14 +39,19 @@ public class PlaceTastingRoomOrderImpl implements PlaceTastingRoomOrder {
   @Override
   public void execute() {
     log.info("place tasting room order task starting...");
-    final var customerList = customerRepository.findAllByNameLike(TASTING_ROOM);
-    if (Objects.isNull(customerList) || customerList.size() != 1) {
-      log.error("Error in tasting room");
-      return;
-    }
+    try {
+      final var customerList = customerRepository.findAllByNameLike(TASTING_ROOM);
+      if (Objects.isNull(customerList) || customerList.size() != 1) {
+        log.error("Invalid data to run tasting room");
+        return;
+      }
 
-    final var savedOrder = placeOrder(customerList.getFirst());
-    log.info("Beer order {} created by place tasting room order task", savedOrder.getId().toString());
+      final var savedOrder = placeOrder(customerList.getFirst());
+      log.info("Beer order {} created by place tasting room order task", savedOrder.getId().toString());
+    } catch (Exception e) {
+      log.error("Error in tasting room");
+      log.error(e.getMessage());
+    }
   }
 
   private BeerOrderDto placeOrder(CustomerEntity customer) {

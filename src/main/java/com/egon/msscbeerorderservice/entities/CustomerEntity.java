@@ -3,6 +3,7 @@ package com.egon.msscbeerorderservice.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
@@ -20,11 +21,14 @@ public class CustomerEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @JdbcTypeCode(java.sql.Types.VARCHAR)
   @Column(length = 36, updatable = false, nullable = false)
   private UUID id;
 
   private String name;
 
+  @JdbcTypeCode(java.sql.Types.VARCHAR)
+  @Column(length = 36)
   private UUID apiKey;
 
   @OneToMany(mappedBy = "customer")
