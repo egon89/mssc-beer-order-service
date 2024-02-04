@@ -9,6 +9,7 @@ import com.egon.msscbeerorderservice.services.PlaceOrderBeerOrderService;
 import com.egon.msscbeerorderservice.services.PlaceTastingRoomOrder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,10 +35,14 @@ public class PlaceTastingRoomOrderImpl implements PlaceTastingRoomOrder {
   private final BeerOrderRepository beerOrderRepository;
   private final List<String> beerUpcs = List.of(BEER_1_UPC, BEER_2_UPC, BEER_3_UPC);
 
+  @Value("${beer.initial.job.execute}")
+  private Boolean executeInitialJob;
+
   @Transactional
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
   @Override
   public void execute() {
+    if (executeInitialJob != null && !executeInitialJob) return;
     log.info("place tasting room order task starting...");
     try {
       final var customerList = customerRepository.findAllByNameLike(TASTING_ROOM);
