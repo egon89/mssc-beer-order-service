@@ -3,6 +3,7 @@ package com.egon.msscbeerorderservice.services.impl;
 import com.egon.brewery.dtos.BeerOrderDto;
 import com.egon.msscbeerorderservice.enums.OrderEventEnum;
 import com.egon.msscbeerorderservice.enums.OrderStatusEnum;
+import com.egon.msscbeerorderservice.interceptors.BeerOrderStateChangeInterceptor;
 import com.egon.msscbeerorderservice.mappers.BeerOrderMapper;
 import com.egon.msscbeerorderservice.repositories.BeerOrderRepository;
 import com.egon.msscbeerorderservice.services.BaseBeerOrderManager;
@@ -19,13 +20,15 @@ public class NewOrderBeerServiceImpl extends BaseBeerOrderManager implements New
   public NewOrderBeerServiceImpl(
       StateMachineFactory<OrderStatusEnum, OrderEventEnum> stateMachineFactory,
       BeerOrderMapper mapper,
-      BeerOrderRepository repository) {
-    super(stateMachineFactory, mapper, repository);
+      BeerOrderRepository repository,
+      BeerOrderStateChangeInterceptor beerOrderStateChangeInterceptor) {
+    super(stateMachineFactory, mapper, repository, beerOrderStateChangeInterceptor);
   }
 
   @Transactional
   @Override
   public BeerOrderDto execute(BeerOrderDto beerOrderDto) {
+    log.debug("calling new order beer service");
     beerOrderDto.setId(null);
     beerOrderDto.setOrderStatus(OrderStatusEnum.NEW);
 
