@@ -1,6 +1,6 @@
 package com.egon.msscbeerorderservice.services.impl;
 
-import com.egon.msscbeerorderservice.dtos.BeerDto;
+import com.egon.brewery.dtos.BeerDto;
 import com.egon.msscbeerorderservice.services.GetBeerByIdService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

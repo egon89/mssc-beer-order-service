@@ -1,4 +1,4 @@
-package com.egon.msscbeerorderservice.dtos.request;
+package com.egon.brewery.dtos.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,6 +1,6 @@
 package com.egon.msscbeerorderservice.controllers;
 
-import com.egon.msscbeerorderservice.dtos.BeerOrderPagedListDto;
+import com.egon.brewery.dtos.BeerOrderPagedListDto;
 import com.egon.msscbeerorderservice.services.PagedListBeerOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

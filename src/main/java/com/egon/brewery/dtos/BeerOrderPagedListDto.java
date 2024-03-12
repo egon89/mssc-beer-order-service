@@ -1,4 +1,4 @@
-package com.egon.msscbeerorderservice.dtos;
+package com.egon.brewery.dtos;
 
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;

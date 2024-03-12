@@ -1,6 +1,6 @@
 package com.egon.msscbeerorderservice.services.impl;
 
-import com.egon.msscbeerorderservice.dtos.BeerOrderPagedListDto;
+import com.egon.brewery.dtos.BeerOrderPagedListDto;
 import com.egon.msscbeerorderservice.mappers.BeerOrderMapper;
 import com.egon.msscbeerorderservice.repositories.BeerOrderRepository;
 import com.egon.msscbeerorderservice.repositories.CustomerRepository;

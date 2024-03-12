@@ -1,6 +1,6 @@
 package com.egon.msscbeerorderservice.services;
 
-import com.egon.msscbeerorderservice.dtos.BeerOrderPagedListDto;
+import com.egon.brewery.dtos.BeerOrderPagedListDto;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;

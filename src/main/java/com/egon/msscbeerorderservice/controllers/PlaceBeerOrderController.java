@@ -1,7 +1,7 @@
 package com.egon.msscbeerorderservice.controllers;
 
-import com.egon.msscbeerorderservice.dtos.BeerOrderDto;
-import com.egon.msscbeerorderservice.dtos.request.BeerOrderRequestDto;
+import com.egon.brewery.dtos.BeerOrderDto;
+import com.egon.brewery.dtos.request.BeerOrderRequestDto;
 import com.egon.msscbeerorderservice.mappers.BeerOrderMapper;
 import com.egon.msscbeerorderservice.services.PlaceOrderBeerOrderService;
 import lombok.RequiredArgsConstructor;

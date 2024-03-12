@@ -1,7 +1,7 @@
 package com.egon.msscbeerorderservice.mappers;
 
-import com.egon.msscbeerorderservice.dtos.BeerOrderDto;
-import com.egon.msscbeerorderservice.dtos.request.BeerOrderRequestDto;
+import com.egon.brewery.dtos.BeerOrderDto;
+import com.egon.brewery.dtos.request.BeerOrderRequestDto;
 import com.egon.msscbeerorderservice.entities.BeerOrderEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

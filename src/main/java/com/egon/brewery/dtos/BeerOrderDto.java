@@ -1,4 +1,4 @@
-package com.egon.msscbeerorderservice.dtos;
+package com.egon.brewery.dtos;
 
 import com.egon.msscbeerorderservice.enums.OrderStatusEnum;
 import lombok.Builder;

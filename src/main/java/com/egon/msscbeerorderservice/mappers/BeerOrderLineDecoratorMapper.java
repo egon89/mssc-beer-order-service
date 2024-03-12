@@ -1,6 +1,6 @@
 package com.egon.msscbeerorderservice.mappers;
 
-import com.egon.msscbeerorderservice.dtos.BeerOrderLineDto;
+import com.egon.brewery.dtos.BeerOrderLineDto;
 import com.egon.msscbeerorderservice.entities.BeerOrderLineEntity;
 import com.egon.msscbeerorderservice.services.GetBeerByUpcService;
 import org.springframework.beans.factory.annotation.Autowired;
