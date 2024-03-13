@@ -3,6 +3,7 @@ package com.egon.msscbeerorderservice.interceptors;
 import com.egon.msscbeerorderservice.enums.OrderEventEnum;
 import com.egon.msscbeerorderservice.enums.OrderStatusEnum;
 import com.egon.msscbeerorderservice.repositories.BeerOrderRepository;
+import com.egon.msscbeerorderservice.services.BaseBeerOrderManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -13,6 +14,7 @@ import org.springframework.statemachine.transition.Transition;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,16 +30,18 @@ public class BeerOrderStateChangeInterceptor extends StateMachineInterceptorAdap
       Transition<OrderStatusEnum, OrderEventEnum> transition,
       StateMachine<OrderStatusEnum, OrderEventEnum> stateMachine,
       StateMachine<OrderStatusEnum, OrderEventEnum> rootStateMachine) {
-    final var id = Optional.ofNullable(stateMachine)
-        .map(StateMachine::getUuid)
+    final var optionalMessage = Optional.ofNullable(message);
+    final var orderId = optionalMessage
+        .map(Message::getHeaders)
+        .map(messageHeaders -> (UUID) messageHeaders.get(BaseBeerOrderManager.ORDER_ID_HEADER))
         .orElseThrow(IllegalArgumentException::new);
     final var newStatus = Optional.ofNullable(state).map(State::getId).orElseThrow(IllegalArgumentException::new);
-    final var event = Optional.ofNullable(message).map(Message::getPayload).orElseThrow(IllegalArgumentException::new);
-    final var beerOrder = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found!"));
+    final var event = optionalMessage.map(Message::getPayload).orElseThrow(IllegalArgumentException::new);
+    final var beerOrder = repository.findById(orderId).orElseThrow(() -> new RuntimeException("Not found!"));
     final var previousStatus = beerOrder.getOrderStatus();
     beerOrder.setOrderStatus(newStatus);
     final var savedBeerOrder = repository.save(beerOrder);
     log.debug("Beer Order {} changed from {} to {} in {} event",
-        savedBeerOrder.getId(), previousStatus, savedBeerOrder.getOrderStatus(), event);
+        orderId, previousStatus, savedBeerOrder.getOrderStatus(), event);
   }
 }

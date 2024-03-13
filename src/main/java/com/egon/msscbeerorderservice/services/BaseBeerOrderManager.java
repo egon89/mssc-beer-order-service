@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @RequiredArgsConstructor
 public abstract class BaseBeerOrderManager {
+  public static final String ORDER_ID_HEADER = "order_id";
   protected final StateMachineFactory<OrderStatusEnum, OrderEventEnum> stateMachineFactory;
   protected final BeerOrderMapper mapper;
   protected final BeerOrderRepository repository;
@@ -25,7 +26,10 @@ public abstract class BaseBeerOrderManager {
   protected void sendEvent(BeerOrderDto beerOrderDto, OrderEventEnum orderEventEnum) {
     log.debug("Sending event {} for beer order {}", orderEventEnum, beerOrderDto.getId());
     var smf = build(beerOrderDto);
-    final var msg = MessageBuilder.withPayload(orderEventEnum).build();
+    final var msg = MessageBuilder
+        .withPayload(orderEventEnum)
+        .setHeader(ORDER_ID_HEADER, beerOrderDto.getId())
+        .build();
     smf.sendEvent(Mono.just(msg)).blockFirst();
   }
 
