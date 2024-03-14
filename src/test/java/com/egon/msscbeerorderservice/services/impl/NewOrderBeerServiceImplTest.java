@@ -26,6 +26,6 @@ class NewOrderBeerServiceImplTest {
     assertThat(savedBeerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.NEW);
 
     final var beerOrder = repository.findById(savedBeerOrder.getId()).orElseThrow();
-    assertThat(beerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.NEW);
+    assertThat(beerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.VALIDATION_PENDING);
   }
 }
