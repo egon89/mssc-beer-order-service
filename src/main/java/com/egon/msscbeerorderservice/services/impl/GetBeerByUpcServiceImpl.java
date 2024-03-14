@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
-import static com.egon.msscbeerorderservice.utils.BeerIntegrationUtils.beerPathFactory;
+import static com.egon.msscbeerorderservice.utils.BeerIntegrationUtil.beerPathFactory;
 
 @Slf4j
 @Service
