@@ -1,7 +1,9 @@
 package com.egon.msscbeerorderservice.config;
 
+import com.egon.msscbeerorderservice.actions.ValidateOrderRequestAction;
 import com.egon.msscbeerorderservice.enums.OrderEventEnum;
 import com.egon.msscbeerorderservice.enums.OrderStatusEnum;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.StateMachineConfigurerAdapter;
@@ -10,10 +12,14 @@ import org.springframework.statemachine.config.builders.StateMachineTransitionCo
 
 import java.util.EnumSet;
 
-@Configuration
 @EnableStateMachineFactory
+@RequiredArgsConstructor
+@Configuration
 public class BeerOrderStateMachineConfig
     extends StateMachineConfigurerAdapter<OrderStatusEnum, OrderEventEnum> {
+
+  private final ValidateOrderRequestAction validateOrderRequestAction;
+
   @Override
   public void configure(StateMachineStateConfigurer<OrderStatusEnum, OrderEventEnum> states) throws Exception {
     states.withStates()
@@ -32,6 +38,7 @@ public class BeerOrderStateMachineConfig
     transitions.withExternal()
         .source(OrderStatusEnum.NEW).target(OrderStatusEnum.VALIDATION_PENDING)
           .event(OrderEventEnum.VALIDATE_ORDER)
+          .action(validateOrderRequestAction)
         .and().withExternal()
         .source(OrderStatusEnum.NEW).target(OrderStatusEnum.VALIDATED)
           .event(OrderEventEnum.VALIDATION_PASSED)
