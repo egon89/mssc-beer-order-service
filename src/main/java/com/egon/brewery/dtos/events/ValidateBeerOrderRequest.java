@@ -1,4 +1,4 @@
-package com.egon.brewery.dtos.request;
+package com.egon.brewery.dtos.events;
 
 import com.egon.brewery.dtos.BeerOrderDto;
 import lombok.AllArgsConstructor;

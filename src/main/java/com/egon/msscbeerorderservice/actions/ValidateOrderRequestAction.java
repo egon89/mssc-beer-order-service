@@ -1,6 +1,6 @@
 package com.egon.msscbeerorderservice.actions;
 
-import com.egon.brewery.dtos.request.ValidateBeerOrderRequest;
+import com.egon.brewery.dtos.events.ValidateBeerOrderRequest;
 import com.egon.msscbeerorderservice.config.JmsConfig;
 import com.egon.msscbeerorderservice.enums.OrderEventEnum;
 import com.egon.msscbeerorderservice.enums.OrderStatusEnum;

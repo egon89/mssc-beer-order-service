@@ -23,6 +23,8 @@ public class BeerOrderLineDto extends BaseDto {
     this.beerName = beerName;
     this.beerId = beerId;
     this.orderQuantity = orderQuantity;
+    this.beerStyle = beerStyle;
+    this.price = price;
   }
 
   private String upc;

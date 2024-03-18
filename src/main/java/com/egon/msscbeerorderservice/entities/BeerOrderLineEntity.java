@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -32,6 +33,8 @@ public class BeerOrderLineEntity {
   private Integer orderQuantity = 0;
 
   private Integer quantityAllocated = 0;
+
+  private BigDecimal price;
 
   @CreationTimestamp
   @Column(updatable = false)
