@@ -33,7 +33,7 @@ class NewOrderBeerServiceImplTest {
   BeerOrderRepository repository;
 
   // remove the jmsTemplate mock to run an integration test
-  @MockBean
+  // @MockBean
   JmsTemplate jmsTemplate;
 
   @MockBean
