@@ -47,7 +47,7 @@ class NewOrderBeerServiceImplTest {
         .price(new BigDecimal(new Random().nextLong(10)))
         .build();
     final var dto = BeerOrderDto.builder()
-        .id(UUID.randomUUID())
+        .id(UUID.fromString("97e1aef4-1c90-471a-8290-ef4df6237a60"))
         .orderStatus(OrderStatusEnum.NEW)
         .beerOrderLines(List.of(orderLine))
         .build();

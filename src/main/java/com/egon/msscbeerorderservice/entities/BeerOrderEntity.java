@@ -2,11 +2,10 @@ package com.egon.msscbeerorderservice.entities;
 
 import com.egon.msscbeerorderservice.enums.OrderStatusEnum;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 import java.sql.Timestamp;
 import java.util.Set;
@@ -23,6 +22,7 @@ public class BeerOrderEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @JdbcTypeCode(java.sql.Types.VARCHAR)
   @Column(length = 36, updatable = false, nullable = false)
   private UUID id;
 
