@@ -1,5 +1,6 @@
 package com.egon.msscbeerorderservice.config;
 
+import com.egon.msscbeerorderservice.actions.AllocateOrderAction;
 import com.egon.msscbeerorderservice.actions.ValidateOrderRequestAction;
 import com.egon.msscbeerorderservice.enums.OrderEventEnum;
 import com.egon.msscbeerorderservice.enums.OrderStatusEnum;
@@ -19,6 +20,7 @@ public class BeerOrderStateMachineConfig
     extends StateMachineConfigurerAdapter<OrderStatusEnum, OrderEventEnum> {
 
   private final ValidateOrderRequestAction validateOrderRequestAction;
+  private final AllocateOrderAction allocateOrderAction;
 
   @Override
   public void configure(StateMachineStateConfigurer<OrderStatusEnum, OrderEventEnum> states) throws Exception {
@@ -44,6 +46,10 @@ public class BeerOrderStateMachineConfig
           .event(OrderEventEnum.VALIDATION_PASSED)
         .and().withExternal()
         .source(OrderStatusEnum.NEW).target(OrderStatusEnum.VALIDATION_EXCEPTION)
-          .event(OrderEventEnum.VALIDATION_FAILED);
+          .event(OrderEventEnum.VALIDATION_FAILED)
+        .and().withExternal()
+          .source(OrderStatusEnum.VALIDATED).target(OrderStatusEnum.ALLOCATION_PENDING)
+          .event(OrderEventEnum.ALLOCATE_ORDER)
+          .action(allocateOrderAction);
   }
 }
