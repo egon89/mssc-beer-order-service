@@ -33,4 +33,5 @@ public class BeerOrderLineDto extends BaseDto {
   private UUID beerId;
   private int orderQuantity;
   private BigDecimal price;
+  private int quantityAllocated;
 }
