@@ -22,5 +22,11 @@
 			<artifactId>spring-statemachine-core</artifactId>
 			<version>${spring-statemachine-core.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.maciejwalkowiak.spring</groupId>
+			<artifactId>wiremock-spring-boot</artifactId>
+			<version>2.1.2</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
