@@ -7,7 +7,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
-class MsscBeerOrderServiceApplicationTests {
+public class MsscBeerOrderServiceApplicationTests {
+
+	public static final String ACTIVEMQ_ARTEMIS_IMAGE = "apache/activemq-artemis:latest-alpine";
+	public static final String BROKER_URL_PROPERTY = "spring.artemis.broker-url";
+	public static final String BROKER_URL = "tcp://%s:%d";
+	public static final String ANONYMOUS_LOGIN = "ANONYMOUS_LOGIN";
+
 
 	@MockBean
 	private GetBeerByUpcService getBeerByUpcService;

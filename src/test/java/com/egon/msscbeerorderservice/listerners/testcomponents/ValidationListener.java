@@ -17,16 +17,16 @@ public class ValidationListener {
   private final JmsTemplate jmsTemplate;
 
   @JmsListener(destination = JmsConfig.VALIDATE_ORDER_QUEUE)
-  public void list(Message<?> msg){
-
+  public void listen(Message<?> msg){
     final var request = (ValidateBeerOrderRequest) msg.getPayload();
-
-    System.out.println("########### I RAN ########");
-
-    jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_RESULT_QUEUE,
-        ValidateBeerOrderResultDto.builder()
-            .isValid(true)
-            .id(request.getBeerOrderDto().getId())
-            .build());
+    log.debug("Receiving the beer order {} from {} queue",
+        request.getBeerOrderDto().getId(), JmsConfig.VALIDATE_ORDER_QUEUE);
+    final var result = ValidateBeerOrderResultDto.builder()
+        .isValid(Boolean.TRUE)
+        .id(request.getBeerOrderDto().getId())
+        .build();
+    jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_RESULT_QUEUE, result);
+    log.debug("Beer order {} (isValid: {}) sent to {} queue",
+        request.getBeerOrderDto().getId(), result.isValid(), JmsConfig.VALIDATE_ORDER_QUEUE);
   }
 }

@@ -1,8 +1,6 @@
 package com.egon.msscbeerorderservice.services.impl;
 
 import com.egon.brewery.dtos.BeerDto;
-import com.egon.brewery.dtos.BeerOrderDto;
-import com.egon.brewery.dtos.BeerOrderLineDto;
 import com.egon.msscbeerorderservice.enums.OrderStatusEnum;
 import com.egon.msscbeerorderservice.repositories.BeerOrderRepository;
 import com.egon.msscbeerorderservice.services.NewOrderBeerService;
@@ -17,20 +15,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
-import java.math.BigDecimal;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import static com.egon.msscbeerorderservice.MsscBeerOrderServiceApplicationTests.*;
+import static com.egon.msscbeerorderservice.helper.BeerOrderHelper.createNewBeerOrderDto;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 // https://wiremock.org/docs/solutions/spring-boot/
 // https://github.com/maciejwalkowiak/wiremock-spring-boot
-// @SpringBootTest(properties = "spring.profiles.include=test")
+// https://foojay.io/today/testing-spring-boot-jms-with-activemq-artemis-and-testcontainers/
+@Testcontainers
 @SpringBootTest
 @EnableWireMock({
     @ConfigureWireMock(name = "beer-service", property = "beer.service.host")
@@ -40,47 +44,42 @@ class NewOrderBeerServiceImplTest {
   @InjectWireMock("beer-service")
   private WireMockServer wiremock;
 
+  @Container
+  static GenericContainer<?> artemis = new GenericContainer<>(DockerImageName.parse(ACTIVEMQ_ARTEMIS_IMAGE))
+      .withEnv(ANONYMOUS_LOGIN, "true")
+      .withExposedPorts(61616);
+
+  @DynamicPropertySource
+  static void artemisProperties(DynamicPropertyRegistry registry) {
+    registry.add(BROKER_URL_PROPERTY,
+        () -> BROKER_URL.formatted(artemis.getHost(), artemis.getMappedPort(61616)));
+  }
+
   @Autowired
   NewOrderBeerService newOrderBeerService;
 
   @Autowired
   BeerOrderRepository repository;
 
-  // remove the jmsTemplate mock to run an integration test
-//  @MockBean
-  @Autowired
-  JmsTemplate jmsTemplate;
-
   @Autowired
   ObjectMapper objectMapper;
+
+  @Autowired
+  private JmsTemplate jmsTemplate;
 
   @Test
   void shouldCreateANewBeerOrder() throws JsonProcessingException {
     final var upc = String.valueOf(new Random().nextInt(50000));
     final var path = "%s/upc/%s".formatted(BeerIntegrationUtil.BEER_PATH, upc);
     final var beerResponse = BeerDto.builder().id(UUID.randomUUID()).upc(upc).name("Beer A").build();
-    final var orderLine = BeerOrderLineDto.builder()
-        .beerId(UUID.randomUUID())
-        .upc(upc)
-        .price(new BigDecimal(new Random().nextLong(10)))
-        .build();
-    final var dto = BeerOrderDto.builder()
-        .id(UUID.fromString("97e1aef4-1c90-471a-8290-ef4df6237a60"))
-        .orderStatus(OrderStatusEnum.NEW)
-        .beerOrderLines(List.of(orderLine))
-        .build();
+    final var dto = createNewBeerOrderDto(UUID.fromString("97e1aef4-1c90-471a-8290-ef4df6237a60"), upc);
     wiremock.stubFor(get(path)
         .willReturn(okJson(objectMapper.writeValueAsString(beerResponse))));
 
     final var savedBeerOrder = newOrderBeerService.execute(dto);
-    //assertThat(savedBeerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.NEW);
+    assertThat(savedBeerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.NEW);
 
-    await().untilAsserted(() -> {
-      final var beerOrder = repository.findById(savedBeerOrder.getId()).orElseThrow();
-      assertThat(beerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.VALIDATION_PENDING);
-    });
-//    final var beerOrder = repository.findById(savedBeerOrder.getId()).orElseThrow();
-//    assertThat(beerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.VALIDATION_PENDING);
-//    verify(jmsTemplate).convertAndSend(anyString(), any(ValidateBeerOrderRequest.class));
+    final var beerOrder = repository.findById(savedBeerOrder.getId()).orElseThrow();
+    assertThat(beerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.VALIDATION_PENDING);
   }
 }
