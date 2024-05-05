@@ -7,6 +7,7 @@ import com.egon.msscbeerorderservice.enums.OrderStatusEnum;
 import com.egon.msscbeerorderservice.mappers.BeerOrderMapper;
 import com.egon.msscbeerorderservice.repositories.BeerOrderRepository;
 import com.egon.msscbeerorderservice.services.BaseBeerOrderManager;
+import jakarta.jms.ConnectionFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,6 +44,9 @@ class AllocateOrderActionTest {
   // change to @Autowired for integration test
   @MockBean
   JmsTemplate jmsTemplate;
+
+  @MockBean
+  ConnectionFactory connectionFactory;
 
   @Test
   void shouldSendBeerOrderToAllocateOrderQueue() {
