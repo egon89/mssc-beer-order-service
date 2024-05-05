@@ -40,10 +40,11 @@ public class ProcessValidationResultImpl extends BaseBeerOrderManager implements
   }
 
   private final Consumer<BeerOrderDto> validationPassedConsumer = beerOrder -> {
-    log.debug("Validation passed for beer order {}", beerOrder.getId());
-    sendEvent((beerOrder), OrderEventEnum.VALIDATION_PASSED);
+    log.debug("Validation passed for beer order {} (status {})", beerOrder.getId(), beerOrder.getOrderStatus());
+    sendEvent(beerOrder, OrderEventEnum.VALIDATION_PASSED);
     final var validateOrder = repository.findById(beerOrder.getId())
         .orElseThrow(() -> new RuntimeException("Not found"));
+    log.debug("Validation passed event sent for beer order {} (status {})", validateOrder.getId(), validateOrder.getOrderStatus());
     sendEvent(mapper.toDto(validateOrder), OrderEventEnum.ALLOCATE_ORDER);
   };
 

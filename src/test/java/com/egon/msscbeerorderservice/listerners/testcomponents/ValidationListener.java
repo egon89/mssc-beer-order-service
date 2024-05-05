@@ -27,6 +27,6 @@ public class ValidationListener {
         .build();
     jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_RESULT_QUEUE, result);
     log.debug("Beer order {} (isValid: {}) sent to {} queue",
-        request.getBeerOrderDto().getId(), result.isValid(), JmsConfig.VALIDATE_ORDER_QUEUE);
+        request.getBeerOrderDto().getId(), result.isValid(), JmsConfig.VALIDATE_ORDER_RESULT_QUEUE);
   }
 }
