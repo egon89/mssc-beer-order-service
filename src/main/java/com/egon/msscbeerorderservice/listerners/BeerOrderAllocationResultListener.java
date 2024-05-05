@@ -23,6 +23,7 @@ public class BeerOrderAllocationResultListener {
 
   @JmsListener(destination = JmsConfig.ALLOCATE_ORDER_RESPONSE_QUEUE)
   public void listen(AllocateBeerOrderResult result) {
+    log.debug("Listen {} queue for order {}", JmsConfig.ALLOCATE_ORDER_RESPONSE_QUEUE, result.getBeerOrderDto().getId());
     Objects.requireNonNull(result);
     switch (result) {
       case AllocateBeerOrderResult a when a.isAllocationError() && a.isPendingInventory() ->

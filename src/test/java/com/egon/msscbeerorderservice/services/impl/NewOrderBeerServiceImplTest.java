@@ -11,9 +11,11 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
 import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
 import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
+import jakarta.jms.ConnectionFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -24,12 +26,14 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static com.egon.msscbeerorderservice.MsscBeerOrderServiceApplicationTests.*;
 import static com.egon.msscbeerorderservice.helper.BeerOrderHelper.createNewBeerOrderDto;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 // https://wiremock.org/docs/solutions/spring-boot/
 // https://github.com/maciejwalkowiak/wiremock-spring-boot
@@ -47,7 +51,8 @@ class NewOrderBeerServiceImplTest {
   @Container
   static GenericContainer<?> artemis = new GenericContainer<>(DockerImageName.parse(ACTIVEMQ_ARTEMIS_IMAGE))
       .withEnv(ANONYMOUS_LOGIN, "true")
-      .withExposedPorts(61616);
+      .withExposedPorts(61616)
+      .withReuse(Boolean.TRUE);
 
   @DynamicPropertySource
   static void artemisProperties(DynamicPropertyRegistry registry) {
@@ -64,8 +69,8 @@ class NewOrderBeerServiceImplTest {
   @Autowired
   ObjectMapper objectMapper;
 
-  @Autowired
-  private JmsTemplate jmsTemplate;
+//  @Autowired
+//  private JmsTemplate jmsTemplate;
 
   @Test
   void shouldCreateANewBeerOrder() throws JsonProcessingException {
@@ -78,8 +83,18 @@ class NewOrderBeerServiceImplTest {
 
     final var savedBeerOrder = newOrderBeerService.execute(dto);
     assertThat(savedBeerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.NEW);
+    await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+      System.out.println("until asserted started");
+      final var beerOrder = repository.findById(savedBeerOrder.getId()).orElseThrow();
+      assertThat(beerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.ALLOCATION_PENDING);
+      System.out.println("until asserted finished");
+    });
 
-    final var beerOrder = repository.findById(savedBeerOrder.getId()).orElseThrow();
-    assertThat(beerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.VALIDATION_PENDING);
+    await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+      System.out.println("until asserted 2 started");
+      final var beerOrder = repository.findById(savedBeerOrder.getId()).orElseThrow();
+      assertThat(beerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.ALLOCATED);
+      System.out.println("until asserted 2 finished");
+    });
   }
 }
