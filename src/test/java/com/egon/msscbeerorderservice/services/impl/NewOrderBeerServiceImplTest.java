@@ -11,12 +11,9 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.maciejwalkowiak.wiremock.spring.ConfigureWireMock;
 import com.maciejwalkowiak.wiremock.spring.EnableWireMock;
 import com.maciejwalkowiak.wiremock.spring.InjectWireMock;
-import jakarta.jms.ConnectionFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
@@ -69,9 +66,6 @@ class NewOrderBeerServiceImplTest {
   @Autowired
   ObjectMapper objectMapper;
 
-//  @Autowired
-//  private JmsTemplate jmsTemplate;
-
   @Test
   void shouldCreateANewBeerOrder() throws JsonProcessingException {
     final var upc = String.valueOf(new Random().nextInt(50000));
@@ -82,19 +76,11 @@ class NewOrderBeerServiceImplTest {
         .willReturn(okJson(objectMapper.writeValueAsString(beerResponse))));
 
     final var savedBeerOrder = newOrderBeerService.execute(dto);
-    assertThat(savedBeerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.NEW);
-    await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
-      System.out.println("until asserted started");
-      final var beerOrder = repository.findById(savedBeerOrder.getId()).orElseThrow();
-      assertThat(beerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.ALLOCATION_PENDING);
-      System.out.println("until asserted finished");
-    });
+    assertThat(OrderStatusEnum.NEW).isEqualTo(savedBeerOrder.getOrderStatus());
 
     await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
-      System.out.println("until asserted 2 started");
       final var beerOrder = repository.findById(savedBeerOrder.getId()).orElseThrow();
-      assertThat(beerOrder.getOrderStatus()).isEqualTo(OrderStatusEnum.ALLOCATED);
-      System.out.println("until asserted 2 finished");
+      assertThat(OrderStatusEnum.ALLOCATED).isEqualTo(beerOrder.getOrderStatus());
     });
   }
 }

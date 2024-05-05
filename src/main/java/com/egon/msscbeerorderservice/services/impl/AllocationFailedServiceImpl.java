@@ -12,6 +12,7 @@ import com.egon.msscbeerorderservice.services.UpdateAllocateQuantityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -29,8 +30,10 @@ public class AllocationFailedServiceImpl extends BaseBeerOrderManager implements
     this.updateAllocateQuantityService = updateAllocateQuantityService;
   }
 
+  @Transactional
   @Override
   public void execute(BeerOrderDto beerOrderDto) {
+    log.debug("Allocation failed for order {}", beerOrderDto.getId());
     final var order = repository.findById(beerOrderDto.getId()).orElseThrow();
     sendEvent(mapper.toDto(order), OrderEventEnum.ALLOCATION_FAILED);
     updateAllocateQuantityService.execute(beerOrderDto, order);

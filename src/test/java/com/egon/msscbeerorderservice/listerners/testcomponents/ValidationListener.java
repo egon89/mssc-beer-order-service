@@ -1,5 +1,7 @@
 package com.egon.msscbeerorderservice.listerners.testcomponents;
 
+import com.egon.brewery.dtos.events.AllocateBeerOrderRequest;
+import com.egon.brewery.dtos.events.AllocateBeerOrderResult;
 import com.egon.brewery.dtos.events.ValidateBeerOrderRequest;
 import com.egon.brewery.dtos.events.ValidateBeerOrderResultDto;
 import com.egon.msscbeerorderservice.config.JmsConfig;
@@ -28,5 +30,21 @@ public class ValidationListener {
     jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_RESULT_QUEUE, result);
     log.debug("Beer order {} (isValid: {}) sent to {} queue",
         request.getBeerOrderDto().getId(), result.isValid(), JmsConfig.VALIDATE_ORDER_RESULT_QUEUE);
+  }
+
+  @JmsListener(destination = JmsConfig.ALLOCATE_ORDER_QUEUE)
+  public void listenAllocateOrder(Message<?> msg) {
+    final var request = (AllocateBeerOrderRequest) msg.getPayload();
+    log.debug("Receiving the beer order {} from {} queue",
+        request.getBeerOrderDto().getId(), JmsConfig.ALLOCATE_ORDER_QUEUE);
+    final var result = AllocateBeerOrderResult.builder()
+        .beerOrderDto(request.getBeerOrderDto())
+        .build();
+    jmsTemplate.convertAndSend(JmsConfig.ALLOCATE_ORDER_RESPONSE_QUEUE, result);
+    log.debug("Beer order {} (isAllocationError: {}, isPendingInventory: {}) sent to {} queue",
+        request.getBeerOrderDto().getId(),
+        result.isAllocationError(),
+        result.isPendingInventory(),
+        JmsConfig.ALLOCATE_ORDER_RESPONSE_QUEUE);
   }
 }
