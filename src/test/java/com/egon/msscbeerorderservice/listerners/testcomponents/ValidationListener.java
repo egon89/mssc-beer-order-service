@@ -1,5 +1,6 @@
 package com.egon.msscbeerorderservice.listerners.testcomponents;
 
+import com.egon.brewery.dtos.BeerOrderDto;
 import com.egon.brewery.dtos.events.AllocateBeerOrderRequest;
 import com.egon.brewery.dtos.events.AllocateBeerOrderResult;
 import com.egon.brewery.dtos.events.ValidateBeerOrderRequest;
@@ -12,6 +13,9 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+import java.util.function.Predicate;
+
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -20,11 +24,11 @@ public class ValidationListener {
 
   @JmsListener(destination = JmsConfig.VALIDATE_ORDER_QUEUE)
   public void listen(Message<?> msg){
+    Predicate<BeerOrderDto> isInvalidPredicate = s -> "fail-validation".equalsIgnoreCase(s.getCustomerRef());
     final var request = (ValidateBeerOrderRequest) msg.getPayload();
-    log.debug("Receiving the beer order {} from {} queue",
-        request.getBeerOrderDto().getId(), JmsConfig.VALIDATE_ORDER_QUEUE);
+    this.initialLog(request.getBeerOrderDto().getId(), JmsConfig.VALIDATE_ORDER_QUEUE);
     final var result = ValidateBeerOrderResultDto.builder()
-        .isValid(Boolean.TRUE)
+        .isValid(isInvalidPredicate.negate().test(request.getBeerOrderDto()))
         .id(request.getBeerOrderDto().getId())
         .build();
     jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_RESULT_QUEUE, result);
@@ -35,8 +39,7 @@ public class ValidationListener {
   @JmsListener(destination = JmsConfig.ALLOCATE_ORDER_QUEUE)
   public void listenAllocateOrder(Message<?> msg) {
     final var request = (AllocateBeerOrderRequest) msg.getPayload();
-    log.debug("Receiving the beer order {} from {} queue",
-        request.getBeerOrderDto().getId(), JmsConfig.ALLOCATE_ORDER_QUEUE);
+    this.initialLog(request.getBeerOrderDto().getId(), JmsConfig.ALLOCATE_ORDER_QUEUE);
     final var result = AllocateBeerOrderResult.builder()
         .beerOrderDto(request.getBeerOrderDto())
         .build();
@@ -46,5 +49,9 @@ public class ValidationListener {
         result.isAllocationError(),
         result.isPendingInventory(),
         JmsConfig.ALLOCATE_ORDER_RESPONSE_QUEUE);
+  }
+
+  private void initialLog(UUID id, String queue) {
+    log.debug("Receiving the beer order {} from {} queue", id, queue);
   }
 }

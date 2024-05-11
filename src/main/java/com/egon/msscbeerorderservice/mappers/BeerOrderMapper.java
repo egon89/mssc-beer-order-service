@@ -9,9 +9,11 @@ import org.mapstruct.Mapping;
 @Mapper(uses = {DateMapper.class, BeerOrderLineMapper.class})
 public interface BeerOrderMapper {
   @Mapping(target = "customerId", source = "customer.id")
+  @Mapping(target = "customerRef", source = "customerReference")
   BeerOrderDto toDto(BeerOrderEntity entity);
 
   BeerOrderDto toDto(BeerOrderRequestDto requestDto);
 
+  @Mapping(target = "customerReference", source = "customerRef")
   BeerOrderEntity toEntity(BeerOrderDto dto);
 }

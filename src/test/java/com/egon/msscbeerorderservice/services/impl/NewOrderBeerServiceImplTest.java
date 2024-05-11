@@ -83,4 +83,25 @@ class NewOrderBeerServiceImplTest {
       assertThat(OrderStatusEnum.ALLOCATED).isEqualTo(beerOrder.getOrderStatus());
     });
   }
+
+  @Test
+  void shouldFailValidationForANewBeerOrder() throws JsonProcessingException {
+    final var upc = String.valueOf(new Random().nextInt(50000));
+    final var path = "%s/upc/%s".formatted(BeerIntegrationUtil.BEER_PATH, upc);
+    final var beerResponse = BeerDto.builder().id(UUID.randomUUID()).upc(upc).name("Beer B").build();
+    final var dto = createNewBeerOrderDto(UUID.fromString("97e1aef4-1c90-471a-8290-ef4df6237a60"), upc)
+        .toBuilder()
+        .customerRef("fail-validation")
+        .build();
+    wiremock.stubFor(get(path)
+        .willReturn(okJson(objectMapper.writeValueAsString(beerResponse))));
+
+    final var savedBeerOrder = newOrderBeerService.execute(dto);
+    assertThat(OrderStatusEnum.NEW).isEqualTo(savedBeerOrder.getOrderStatus());
+
+    await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+      final var beerOrder = repository.findById(savedBeerOrder.getId()).orElseThrow();
+      assertThat(OrderStatusEnum.VALIDATION_EXCEPTION).isEqualTo(beerOrder.getOrderStatus());
+    });
+  }
 }
