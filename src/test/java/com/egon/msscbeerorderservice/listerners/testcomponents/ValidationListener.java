@@ -51,6 +51,12 @@ public class ValidationListener {
         JmsConfig.ALLOCATE_ORDER_RESPONSE_QUEUE);
   }
 
+  @JmsListener(destination = JmsConfig.VALIDATE_FAILED_QUEUE)
+  public void listenValidateFailed(Message<?> msg) {
+    final var orderId = (UUID) msg.getPayload();
+    log.debug("Order {} with failed validation processed!", orderId);
+  }
+
   private void initialLog(UUID id, String queue) {
     log.debug("Receiving the beer order {} from {} queue", id, queue);
   }
