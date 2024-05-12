@@ -24,6 +24,7 @@ public class JmsConfig {
   public static final String VALIDATE_FAILED_QUEUE = "validate-failed";
   public static final String ALLOCATE_ORDER_QUEUE = "allocate-order";
   public static final String ALLOCATE_ORDER_RESPONSE_QUEUE = "allocate-order-response";
+  public static final String DEALLOCATE_ORDER_QUEUE = "deallocate-order";
 
   @Bean
   public JmsListenerContainerFactory<?> myFactory(

@@ -1,6 +1,7 @@
 package com.egon.msscbeerorderservice.config;
 
 import com.egon.msscbeerorderservice.actions.AllocateOrderAction;
+import com.egon.msscbeerorderservice.actions.DeallocateOrderAction;
 import com.egon.msscbeerorderservice.actions.ValidateFailedAction;
 import com.egon.msscbeerorderservice.actions.ValidateOrderRequestAction;
 import com.egon.msscbeerorderservice.enums.OrderEventEnum;
@@ -23,6 +24,7 @@ public class BeerOrderStateMachineConfig
   private final AllocateOrderAction allocateOrderAction;
   private final ValidateFailedAction validateFailedAction;
   private final ValidateOrderRequestAction validateOrderRequestAction;
+  private final DeallocateOrderAction deallocateOrderAction;
 
   @Override
   public void configure(StateMachineStateConfigurer<OrderStatusEnum, OrderEventEnum> states) throws Exception {
@@ -78,6 +80,7 @@ public class BeerOrderStateMachineConfig
           .event(OrderEventEnum.ORDER_PICKED_UP)
         .and().withExternal()
           .source(OrderStatusEnum.ALLOCATED).target(OrderStatusEnum.CANCELLED)
-          .event(OrderEventEnum.CANCEL_ORDER);
+          .event(OrderEventEnum.CANCEL_ORDER)
+          .action(deallocateOrderAction);
   }
 }
