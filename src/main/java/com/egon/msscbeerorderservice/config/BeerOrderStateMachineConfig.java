@@ -34,6 +34,7 @@ public class BeerOrderStateMachineConfig
         .end(OrderStatusEnum.DELIVERY_EXCEPTION)
         .end(OrderStatusEnum.VALIDATION_EXCEPTION)
         .end(OrderStatusEnum.ALLOCATION_EXCEPTION)
+        .end(OrderStatusEnum.CANCELLED)
     ;
   }
 
@@ -51,9 +52,15 @@ public class BeerOrderStateMachineConfig
           .event(OrderEventEnum.VALIDATION_FAILED)
           .action(validateFailedAction)
         .and().withExternal()
+          .source(OrderStatusEnum.VALIDATION_PENDING).target(OrderStatusEnum.CANCELLED)
+          .event(OrderEventEnum.CANCEL_ORDER)
+        .and().withExternal()
           .source(OrderStatusEnum.VALIDATED).target(OrderStatusEnum.ALLOCATION_PENDING)
           .event(OrderEventEnum.ALLOCATE_ORDER)
           .action(allocateOrderAction)
+        .and().withExternal()
+          .source(OrderStatusEnum.VALIDATED).target(OrderStatusEnum.CANCELLED)
+          .event(OrderEventEnum.CANCEL_ORDER)
         .and().withExternal()
           .source(OrderStatusEnum.ALLOCATION_PENDING).target(OrderStatusEnum.ALLOCATED)
           .event(OrderEventEnum.ALLOCATION_SUCCESS)
@@ -62,6 +69,15 @@ public class BeerOrderStateMachineConfig
           .event(OrderEventEnum.ALLOCATION_FAILED)
         .and().withExternal()
           .source(OrderStatusEnum.ALLOCATION_PENDING).target(OrderStatusEnum.PENDING_INVENTORY)
-          .event(OrderEventEnum.ALLOCATION_NO_INVENTORY);
+          .event(OrderEventEnum.ALLOCATION_NO_INVENTORY)
+        .and().withExternal()
+          .source(OrderStatusEnum.ALLOCATION_PENDING).target(OrderStatusEnum.CANCELLED)
+          .event(OrderEventEnum.CANCEL_ORDER)
+        .and().withExternal()
+          .source(OrderStatusEnum.ALLOCATED).target(OrderStatusEnum.PICKED_UP)
+          .event(OrderEventEnum.ORDER_PICKED_UP)
+        .and().withExternal()
+          .source(OrderStatusEnum.ALLOCATED).target(OrderStatusEnum.CANCELLED)
+          .event(OrderEventEnum.CANCEL_ORDER);
   }
 }
