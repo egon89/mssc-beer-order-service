@@ -1,9 +1,8 @@
 package com.egon.msscbeerorderservice.services;
 
-import com.egon.brewery.dtos.CustomerDto;
-
-import java.util.List;
+import com.egon.brewery.dtos.CustomerPagedListDto;
+import org.springframework.data.domain.Pageable;
 
 public interface ListCustomerService {
-  List<CustomerDto> execute();
+  CustomerPagedListDto execute(Pageable pageable);
 }
