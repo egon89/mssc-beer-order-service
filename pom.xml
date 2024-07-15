@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.egon</groupId>
 		<artifactId>mssc-brewery-bom</artifactId>
-		<version>1.6.0</version>
+		<version>1.7.0</version>
 	</parent>
 	<groupId>com.egon</groupId>
 	<artifactId>mssc-beer-order-service</artifactId>
@@ -23,14 +23,6 @@
 			<groupId>org.springframework.statemachine</groupId>
 			<artifactId>spring-statemachine-core</artifactId>
 			<version>${spring-statemachine-core.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.maciejwalkowiak.spring</groupId>
